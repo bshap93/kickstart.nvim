@@ -88,6 +88,36 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
+  {
+    'akinsho/flutter-tools.nvim',
+    lazy = false,
+    dependencies = {
+        'nvim-lua/plenary.nvim',
+        'stevearc/dressing.nvim', -- optional for vim.ui.select
+    },
+    config = function()
+      require("config.flutter").setup()
+    end,
+  },
+  {
+    "mfussenegger/nvim-dap",
+    opt = true,
+    event = "BufReadPre",
+    module = { "dap" },
+    wants = { "nvim-dap-virtual-text", "DAPInstall.nvim", "nvim-dap-ui", "nvim-dap-python", "which-key.nvim" },
+    requires = {
+      "Pocco81/DAPInstall.nvim",
+      "theHamsta/nvim-dap-virtual-text",
+      "rcarriga/nvim-dap-ui",
+      "mfussenegger/nvim-dap-python",
+      "nvim-telescope/telescope-dap.nvim",
+      { "leoluz/nvim-dap-go", module = "dap-go" },
+      { "jbyuki/one-small-step-for-vimkind", module = "osv" },
+    },
+    -- config = function()
+    --   require("config.dap").setup()
+    -- end,
+  },
 
   {
     -- Autocompletion
@@ -106,7 +136,11 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim', opts = {
+      defaults = {
+        ["<leader>l"] = { name = "+LSP" },
+      },
+  } },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -542,6 +576,15 @@ local servers = {
 
 -- Setup neovim lua configuration
 require('neodev').setup()
+
+-- Copilot Configuration
+vim.g.copilot_no_tab_map = true
+vim.g.copilot_assume_mapped = true
+vim.g.copilot_tab_fallback = ""
+
+-- Optional: Key mappings for navigating Copilot suggestions
+vim.api.nvim_set_keymap('i', '<C-J>', 'copilot#Accept("\\<CR>")', {silent = true, script = true, expr = true})
+
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
